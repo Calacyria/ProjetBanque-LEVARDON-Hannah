@@ -60,7 +60,7 @@ namespace Partie1.BusinessLogic
                 }
 
 
-                if (total + montant <= RetraitAutorise)
+                if (total + montant < RetraitAutorise)
                 {
                     Solde -= montant;
                     return true;
