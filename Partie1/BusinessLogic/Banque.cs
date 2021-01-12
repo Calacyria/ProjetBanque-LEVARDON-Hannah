@@ -37,7 +37,7 @@ namespace Partie1.BusinessLogic
                     Compte emetteur = Comptes[transaction.Emetteur];
                     if (emetteur.Retrait(transaction.Montant))
                     {
-                        emetteur.Historique = new List<Transaction>();
+                        //emetteur.Historique = new List<Transaction>();
                         emetteur.Historique.Add(transaction);
                         return true;
                     }
@@ -75,7 +75,7 @@ namespace Partie1.BusinessLogic
                     {
                         if (emetteur.Historique is null)
                         {
-                            emetteur.Historique = new List<Transaction>();
+                            //emetteur.Historique = new List<Transaction>();
                             emetteur.Historique.Add(transaction);
                             return true;
                         }
