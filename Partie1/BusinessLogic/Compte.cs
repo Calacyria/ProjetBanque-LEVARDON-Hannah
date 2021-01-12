@@ -45,8 +45,20 @@ namespace Partie1.BusinessLogic
         {
             if (montant < Solde)
             {
-               
-                double total = Historique.Count > 0 ? Historique.GetRange(Historique.Count >= 9 ? Historique.Count - 9 : 0, Historique.Count >= 9 ? 9 : Historique.Count).Sum(x => x.Montant) : 0;
+
+                //double total = Historique.Count > 0 ? Historique.GetRange(Historique.Count >= 9 ? Historique.Count - 9 : 0, Historique.Count >= 9 ? 9 : Historique.Count).Sum(x => x.Montant) : 0;
+                double total;
+                List<Transaction> ts = new List<Transaction>();
+                int count = Historique.Count;
+                if (count > 9)
+                {
+                    total = Historique.GetRange(Historique.Count - 9, 9).Sum(x => x.Montant);
+                }
+                else
+                {
+                    total = Historique.Sum(x => x.Montant);
+                }
+
 
                 if (total + montant <= RetraitAutorise)
                 {
