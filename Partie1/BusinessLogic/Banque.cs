@@ -28,26 +28,40 @@ namespace Partie1.BusinessLogic
 
             if (transaction.Emetteur > 0 && transaction.Destinataire == 0)
             {
-
-                Compte emetteur = Comptes[transaction.Emetteur];
-                Console.WriteLine(emetteur.Identifiant);
-
-                if (emetteur.Retrait(transaction.Montant))
+                if (!Comptes.ContainsKey(transaction.Emetteur))
                 {
-                    emetteur.Historique.Add(transaction);
-                    return true;
+                    return false;
                 }
-                return false;
+                else
+                {
+                    Compte emetteur = Comptes[transaction.Emetteur];
+                    if (emetteur.Retrait(transaction.Montant))
+                    {
+                        emetteur.Historique = new List<Transaction>();
+                        emetteur.Historique.Add(transaction);
+                        return true;
+                    }
+                    return false;
+
+                }
+                
+             
             }
             else if (transaction.Emetteur == 0 && transaction.Destinataire > 0)
             {
-                Compte destinataire = Comptes[transaction.Destinataire];
-
-                if (destinataire.Depot(transaction.Montant))
+                if (!Comptes.ContainsKey(transaction.Destinataire))
                 {
-                    return true;
+                    return false;
                 }
-                return false;
+                else
+                {
+                    Compte destinataire = Comptes[transaction.Destinataire];
+                    if (destinataire.Depot(transaction.Montant))
+                    {
+                        return true;
+                    }
+                    return false;
+                }
             }
             else if (transaction.Emetteur > 0 && transaction.Destinataire > 0)
             {

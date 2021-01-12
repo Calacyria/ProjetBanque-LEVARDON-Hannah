@@ -16,7 +16,7 @@ namespace Partie1
 
             string path = Directory.GetCurrentDirectory();
             Dictionary<uint, BusinessLogic.Compte> comptes = new Dictionary<uint, BusinessLogic.Compte>();
-            List<BusinessLogic.Transaction> transactions = new List<BusinessLogic.Transaction>();
+            List<Transaction> transactions = new List<Transaction>();
             BusinessLogic.Banque banque = new BusinessLogic.Banque(comptes, transactions);
             Dictionary<uint, string> Sorties = new Dictionary<uint, string>();
 
@@ -27,13 +27,38 @@ namespace Partie1
                     string[] comptesTab = file.ReadLine().Split(';');
 
                     uint idCompte = uint.Parse(comptesTab[0]);
-                    //double solde = double.Parse(comptesTab[1]);
-                    double solde = double.Parse(comptesTab[1], CultureInfo.InvariantCulture);
-                    BusinessLogic.Compte compte = new BusinessLogic.Compte(idCompte, solde);
+                    //Console.WriteLine($"Numero de compte {idCompte}");
+                    double solde;
 
-                    comptes.Add(idCompte, compte);
+                   
 
+                    if (comptes.ContainsKey(idCompte))
+                    {
+                        Console.WriteLine("Compte deja existant");
+
+                    }
+                    else
+                    {
+                        if (string.IsNullOrEmpty(comptesTab[1]))
+                        {
+                            comptesTab[1] = "0";
+                            solde = double.Parse(comptesTab[1], CultureInfo.InvariantCulture);
+                        }
+                        else
+                        {
+                            solde = double.Parse(comptesTab[1], CultureInfo.InvariantCulture);
+                        }
+                        if (solde >= 0)
+                        {
+                            Compte compte = new Compte(idCompte, solde);
+                            comptes.Add(idCompte, compte);
+                        }
+                    }
                 }
+            }
+            foreach (var cpt in comptes)
+            {
+                Console.WriteLine($"Identifiant compte : {cpt.Value.Identifiant}");
             }
             using (var file = new StreamReader(path + @"\Transactions.csv"))
             {
@@ -46,13 +71,20 @@ namespace Partie1
                     uint idCompteEmetteur = uint.Parse(transactionTab[2]);
                     uint idCompteDestinataire = uint.Parse(transactionTab[3]);
 
-                    //Console.WriteLine($"Numéro de transaction : {idTransaction} ");
+                    Transaction txATrouver = transactions.Find(x => x.Identifiant == idTransaction);
 
-                    Transaction transaction = new Transaction(idTransaction, montant, idCompteEmetteur, idCompteDestinataire);
-                    transactions.Add(transaction);
+                    if (txATrouver != null)
+                    {
+                        Console.WriteLine("Transaction deja existante");
+                    }
+                    else
+                    {
+                        Transaction transaction = new Transaction(idTransaction, montant, idCompteEmetteur, idCompteDestinataire);
+                        transactions.Add(transaction);
+                    }
                 }
             }
-            foreach(var txn in transactions)
+            foreach (var txn in transactions)
             {
                 Console.WriteLine(txn.Identifiant);
             }

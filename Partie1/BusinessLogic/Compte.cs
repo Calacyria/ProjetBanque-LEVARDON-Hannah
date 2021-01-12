@@ -12,28 +12,21 @@ namespace Partie1.BusinessLogic
         // Propriétés
         public uint Identifiant { get; }
         public double Solde { get; set; }
-        public double RetraitAutorise { get; set; }
+        public const double RetraitAutorise = 1000;
         public List<Transaction> Historique { get; set; }
 
 
 
         // Constructeur
-        public Compte(uint identifiant, double solde, double retraitAutorise, List<Transaction> historique)
-        {
-            Identifiant = identifiant;
-            Solde = solde;
-            RetraitAutorise = retraitAutorise;
-            Historique = historique;
-        }
+
         public Compte(uint identifiant, double solde)
         {
             Identifiant = identifiant;
             Solde = solde;
+            Historique = new List<Transaction>();
+
 
         }
-
-
-
         // Méthodes
 
         internal bool Depot(double montant)
@@ -52,20 +45,27 @@ namespace Partie1.BusinessLogic
         {
             if (montant < Solde)
             {
-                if (Historique is null)
+                //if (Historique is null)
+                //{
+                //    Solde -= montant;
+                //    return true;
+                //}
+                //else
+                //{
+                double total = Historique.Count > 0 ? Historique.GetRange(0, Historique.Count >= 9 ? 9 : Historique.Count).Sum(x => x.Montant) : 0;
+                //int NbTxn = Historique.Count();
+                //if (NbTxn >= 9)
+                //{
+                //    NbTxn = 9;
+
+                //}
+                //double MontantTotal = Historique.GetRange(0, NbTxn).Sum(x => x.Montant);
+                if (total + montant <= RetraitAutorise)
                 {
                     Solde -= montant;
                     return true;
                 }
-                else
-                {
-                    double MontantTotal = Historique.Sum(x => x.Montant);
-                    if (MontantTotal < 1000)
-                    {
-                        Solde -= montant;
-                        return true;
-                    }
-                }
+                //    }
             }
             return false;
         }

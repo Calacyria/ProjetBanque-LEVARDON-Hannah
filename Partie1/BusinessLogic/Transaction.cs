@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Partie1.BusinessLogic
 {
 
-    class Transaction
+    public class Transaction
     {
 
         public uint Identifiant { get; set; }
