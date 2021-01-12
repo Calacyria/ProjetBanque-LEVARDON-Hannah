@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -28,10 +29,8 @@ namespace Partie1
                     string[] comptesTab = file.ReadLine().Split(';');
 
                     uint idCompte = uint.Parse(comptesTab[0]);
-                    double solde = double.Parse(comptesTab[1]);
-
-                    Console.WriteLine($"Numéro de Compte : {idCompte} ");
-
+                    //double solde = double.Parse(comptesTab[1]);
+                    double solde = double.Parse(comptesTab[1], CultureInfo.InvariantCulture);
                     BusinessLogic.Compte compte = new BusinessLogic.Compte(idCompte, solde);
 
                     comptes.Add(idCompte, compte);
@@ -50,11 +49,11 @@ namespace Partie1
                     string[] transactionTab = file.ReadLine().Split(';');
 
                     uint idTransaction = uint.Parse(transactionTab[0]);
-                    double montant = double.Parse(transactionTab[1]);
+                    double montant = double.Parse(transactionTab[1], CultureInfo.InvariantCulture);
                     uint idCompteEmetteur = uint.Parse(transactionTab[2]);
                     uint idCompteDestinataire = uint.Parse(transactionTab[3]);
 
-                    Console.WriteLine($"Numéro de transaction : {idTransaction} ");
+                    //Console.WriteLine($"Numéro de transaction : {idTransaction} ");
 
                     Transaction transaction = new Transaction(idTransaction, montant, idCompteEmetteur, idCompteDestinataire);
                     transactions.Add(transaction);
@@ -64,7 +63,7 @@ namespace Partie1
             }
             foreach(var txn in transactions)
             {
-                Console.WriteLine(txn.Montant);
+                Console.WriteLine(txn.Identifiant);
             }
 
             Sorties = banque.MiseAjourCompte(transactions, comptes);

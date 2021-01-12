@@ -16,6 +16,7 @@ namespace Partie1.BusinessLogic
         public List<Transaction> Historique { get; set; }
 
 
+
         // Constructeur
         public Compte(uint identifiant, double solde, double retraitAutorise, List<Transaction> historique)
         {
@@ -28,7 +29,7 @@ namespace Partie1.BusinessLogic
         {
             Identifiant = identifiant;
             Solde = solde;
-          
+
         }
 
 
@@ -51,21 +52,28 @@ namespace Partie1.BusinessLogic
         {
             if (montant < Solde)
             {
-                //if(Historique.Sum( x => x.Montant) < 1000)
-               // {
+                if (Historique is null)
+                {
                     Solde -= montant;
                     return true;
-
-               // }
-                
+                }
+                else
+                {
+                    double MontantTotal = Historique.Sum(x => x.Montant);
+                    if (MontantTotal < 1000)
+                    {
+                        Solde -= montant;
+                        return true;
+                    }
+                }
             }
             return false;
         }
 
         internal bool Prelevement(double montant)
         {
-            
-                return Retrait(montant);
+
+            return Retrait(montant);
         }
 
         internal bool Virement(double montant)
@@ -78,7 +86,7 @@ namespace Partie1.BusinessLogic
 
         }
 
- 
+
 
     }
 }

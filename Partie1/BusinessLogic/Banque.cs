@@ -12,7 +12,7 @@ namespace Partie1.BusinessLogic
         public Dictionary<uint, Compte> Comptes { get; set; }
         public List<Transaction> Transactions { get; set; }
 
-        
+
 
 
         public Banque(Dictionary<uint, Compte> comptes, List<Transaction> transactions)
@@ -23,46 +23,62 @@ namespace Partie1.BusinessLogic
         }
 
         //méthodes
-        internal bool LectureTransaction(double montant, uint compteEmetteur, uint compteDestinaire)
+        internal bool LectureTransaction(Transaction transaction)
         {
-            if (compteEmetteur > 0 && compteDestinaire == 0)
+
+            if (transaction.Emetteur > 0 && transaction.Destinataire == 0)
             {
-                Compte emetteur = Comptes[compteEmetteur];
+
+                Compte emetteur = Comptes[transaction.Emetteur];
                 Console.WriteLine(emetteur.Identifiant);
-              
-                if (emetteur.Retrait(montant))
+
+                if (emetteur.Retrait(transaction.Montant))
+                {
+                    emetteur.Historique.Add(transaction);
+                    return true;
+                }
+                return false;
+            }
+            else if (transaction.Emetteur == 0 && transaction.Destinataire > 0)
+            {
+                Compte destinataire = Comptes[transaction.Destinataire];
+
+                if (destinataire.Depot(transaction.Montant))
                 {
                     return true;
                 }
                 return false;
             }
-            else if (compteEmetteur == 0 && compteDestinaire > 0)
+            else if (transaction.Emetteur > 0 && transaction.Destinataire > 0)
             {
-                Compte destinataire = Comptes[compteDestinaire];
+                Compte destinataire = Comptes[transaction.Destinataire];
+                Compte emetteur = Comptes[transaction.Emetteur];
 
-                if (destinataire.Depot(montant))
+                if (emetteur.Prelevement(transaction.Montant))
                 {
-                    return true;
-                }
-                return false;
-            }
-            else if (compteEmetteur > 0 && compteDestinaire > 0)
-            {
-                Compte destinataire = Comptes[compteDestinaire];
-                Compte emetteur = Comptes[compteEmetteur];
 
-                if (emetteur.Prelevement(montant))
-                {
-                    if (destinataire.Virement(montant))
+                    if (destinataire.Virement(transaction.Montant))
                     {
-                        return true;
+                        if (emetteur.Historique is null)
+                        {
+                            emetteur.Historique = new List<Transaction>();
+                            emetteur.Historique.Add(transaction);
+                            return true;
+                        }
+                        else
+                        {
+                            emetteur.Historique.Add(transaction);
+                            return true;
+                        }
+
+                        
                     }
                     return false;
                 }
 
                 return false;
             }
-            else if(compteEmetteur == 0 && compteDestinaire == 0)
+            else if (transaction.Emetteur == 0 && transaction.Destinataire == 0)
             {
                 return false;
             }
@@ -74,13 +90,15 @@ namespace Partie1.BusinessLogic
         {
             Dictionary<uint, string> Sorties = new Dictionary<uint, string>();
 
+
             foreach (var transaction in transactions)
             {
-                bool validationTransaction = LectureTransaction(transaction.Montant, transaction.Emetteur, transaction.Destinataire);
+                bool validationTransaction = LectureTransaction(transaction);
 
                 if (validationTransaction == true)
                 {
                     Sorties.Add(transaction.Identifiant, "OK");
+
                 }
                 else
                 {
