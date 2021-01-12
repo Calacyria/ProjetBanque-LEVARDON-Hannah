@@ -22,8 +22,6 @@ namespace Partie1
 
             using (var file = new StreamReader(path + @"\Comptes.csv"))
             {
-
-
                 while (!file.EndOfStream)
                 {
                     string[] comptesTab = file.ReadLine().Split(';');
@@ -36,16 +34,11 @@ namespace Partie1
                     comptes.Add(idCompte, compte);
 
                 }
-
-
             }
             using (var file = new StreamReader(path + @"\Transactions.csv"))
             {
-
-
                 while (!file.EndOfStream)
                 {
-
                     string[] transactionTab = file.ReadLine().Split(';');
 
                     uint idTransaction = uint.Parse(transactionTab[0]);
@@ -57,9 +50,7 @@ namespace Partie1
 
                     Transaction transaction = new Transaction(idTransaction, montant, idCompteEmetteur, idCompteDestinataire);
                     transactions.Add(transaction);
-
                 }
-
             }
             foreach(var txn in transactions)
             {

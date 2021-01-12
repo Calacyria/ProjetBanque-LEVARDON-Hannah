@@ -70,8 +70,6 @@ namespace Partie1.BusinessLogic
                             emetteur.Historique.Add(transaction);
                             return true;
                         }
-
-                        
                     }
                     return false;
                 }
@@ -104,11 +102,8 @@ namespace Partie1.BusinessLogic
                 {
                     Sorties.Add(transaction.Identifiant, "KO");
                 }
-
             }
             return Sorties;
-
         }
-
     }
 }
