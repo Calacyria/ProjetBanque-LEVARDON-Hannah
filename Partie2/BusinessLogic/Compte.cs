@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Partie1.BusinessLogic
+namespace Partie2.BusinessLogic
 {
     class Compte
     {
@@ -14,6 +14,8 @@ namespace Partie1.BusinessLogic
         public double Solde { get; set; }
         public const double RetraitAutorise = 1000;
         public List<Transaction> Historique { get; set; }
+        public DateTime DateCreation { get; set; }
+        public DateTime DateResiliation { get; set; }
 
 
 
@@ -45,22 +47,34 @@ namespace Partie1.BusinessLogic
         {
             if (montant < Solde)
             {
-               
-                double total = Historique.Count > 0 ? Historique.GetRange(Historique.Count >= 9 ? Historique.Count - 9 : 0, Historique.Count >= 9 ? 9 : Historique.Count).Sum(x => x.Montant) : 0;
+                //if (Historique is null)
+                //{
+                //    Solde -= montant;
+                //    return true;
+                //}
+                //else
+                //{
+                double total = Historique.Count > 0 ? Historique.GetRange(0, Historique.Count >= 9 ? 9 : Historique.Count).Sum(x => x.Montant) : 0;
+                //int NbTxn = Historique.Count();
+                //if (NbTxn >= 9)
+                //{
+                //    NbTxn = 9;
 
+                //}
+                //double MontantTotal = Historique.GetRange(0, NbTxn).Sum(x => x.Montant);
                 if (total + montant <= RetraitAutorise)
                 {
                     Solde -= montant;
                     return true;
                 }
-
+                //    }
             }
             return false;
         }
 
-        internal bool Prelevement(double montant)
+        internal bool Prelevement(double montant, Gestionnaire gestionnaire, Transaction transaction)
         {
-
+           
             return Retrait(montant);
         }
 

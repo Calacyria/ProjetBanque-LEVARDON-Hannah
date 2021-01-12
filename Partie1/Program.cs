@@ -17,8 +17,8 @@ namespace Partie1
             string path = Directory.GetCurrentDirectory();
             Dictionary<uint, BusinessLogic.Compte> comptes = new Dictionary<uint, BusinessLogic.Compte>();
             List<Transaction> transactions = new List<Transaction>();
-            BusinessLogic.Banque banque = new BusinessLogic.Banque(comptes, transactions);
-            Dictionary<uint, string> Sorties = new Dictionary<uint, string>();
+            Banque banque = new Banque(comptes, transactions);
+            List<string> Sorties = new List<string>(); 
 
             using (var file = new StreamReader(path + @"\Comptes.csv"))
             {
@@ -73,15 +73,9 @@ namespace Partie1
 
                     Transaction txATrouver = transactions.Find(x => x.Identifiant == idTransaction);
 
-                    if (txATrouver != null)
-                    {
-                        Console.WriteLine("Transaction deja existante");
-                    }
-                    else
-                    {
-                        Transaction transaction = new Transaction(idTransaction, montant, idCompteEmetteur, idCompteDestinataire);
-                        transactions.Add(transaction);
-                    }
+                    Transaction transaction = new Transaction(idTransaction, montant, idCompteEmetteur, idCompteDestinataire);
+                    transactions.Add(transaction);
+                    
                 }
             }
             foreach (var txn in transactions)
@@ -93,10 +87,9 @@ namespace Partie1
 
             using (StreamWriter file = new StreamWriter(path + @"\Sorties.csv", true))
             {
-                foreach (KeyValuePair<uint, string> item in Sorties)
+                foreach (var item in Sorties)
                 {
-
-                    file.WriteLine($"{item.Key};{item.Value}");
+                    file.WriteLine($"{item}");
                 }
             }//end using
 

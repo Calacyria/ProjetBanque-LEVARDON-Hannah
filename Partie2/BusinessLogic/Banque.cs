@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Partie1.BusinessLogic
+namespace Partie2.BusinessLogic
 {
     class Banque
     {
@@ -12,14 +12,14 @@ namespace Partie1.BusinessLogic
         public Dictionary<uint, Compte> Comptes { get; set; }
         public List<Transaction> Transactions { get; set; }
 
+        public Dictionary<uint, List<Compte>> ComptesParGestionaire { get; set; }
 
-
+        Gestionnaire gestionnaire { get; set; }
 
         public Banque(Dictionary<uint, Compte> comptes, List<Transaction> transactions)
         {
             Comptes = comptes;
             Transactions = transactions;
-
         }
 
         //méthodes
@@ -42,10 +42,7 @@ namespace Partie1.BusinessLogic
                         return true;
                     }
                     return false;
-
                 }
-
-
             }
             else if (transaction.Emetteur == 0 && transaction.Destinataire > 0)
             {
@@ -67,11 +64,13 @@ namespace Partie1.BusinessLogic
             {
                 Compte destinataire = Comptes[transaction.Destinataire];
                 Compte emetteur = Comptes[transaction.Emetteur];
+                //Compte CompteEmetteurAtrouver = gestionnaire.Comptes.Find(x => x.Identifiant == emetteur.Identifiant);
+                //Compte CompteDestinataireATrouver = gestionnaire.Comptes.Find(x => x.Identifiant == destinataire.Identifiant);
 
-                if (emetteur.Prelevement(transaction.Montant))
+
+                if (gestionnaire.Comptes.Contains(emetteur) && gestionnaire.Comptes.Contains(destinataire))
                 {
-
-                    if (destinataire.Virement(transaction.Montant))
+                    if (emetteur.Prelevement(transaction.Montant, gestionnaire, transaction) && destinataire.Virement(transaction.Montant))
                     {
                         if (emetteur.Historique is null)
                         {
@@ -87,15 +86,31 @@ namespace Partie1.BusinessLogic
                     }
                     return false;
                 }
-
-                return false;
+                else
+                {
+                    double MontantReel = transaction.Montant - gestionnaire.CalculFraisGestion(transaction);
+                    if (emetteur.Prelevement(MontantReel, gestionnaire, transaction) && destinataire.Virement(MontantReel))
+                    {
+                        if (emetteur.Historique is null)
+                        {
+                            emetteur.Historique = new List<Transaction>();
+                            emetteur.Historique.Add(transaction);
+                            return true;
+                        }
+                        else
+                        {
+                            emetteur.Historique.Add(transaction);
+                            return true;
+                        }
+                    }
+                    return false;
+                }
             }
             else if (transaction.Emetteur == 0 && transaction.Destinataire == 0)
             {
                 return false;
             }
-            return false; 
-            
+            return false;
 
         }
 
@@ -127,10 +142,5 @@ namespace Partie1.BusinessLogic
             }
             return Sorties;
         }
-
-
     }
-
-    
 }
-
