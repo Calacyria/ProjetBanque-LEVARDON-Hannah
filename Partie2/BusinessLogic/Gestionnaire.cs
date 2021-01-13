@@ -20,17 +20,49 @@ namespace Partie2.BusinessLogic
         public const string Entreprise = "Entreprise";
 
 
+
+
         // Constructeur
+
+        public Gestionnaire(uint identifiant, string type, uint nombreTransactionMax, double fraisGestion, List<Compte> comptes)
+        {
+            Identifiant = identifiant;
+            Type = type;
+            this.nombreTransactionMax = nombreTransactionMax;
+            FraisGestion = fraisGestion;
+            Comptes = new List<Compte>();
+        }
+        public Gestionnaire(uint identifiant, string type, uint nombreTransactionMax )
+        {
+            Identifiant = identifiant;
+            Type = type;
+            this.nombreTransactionMax = nombreTransactionMax;
+           
+        }
+
+        public Gestionnaire(uint identifiant, string type, uint nombreTransactionMax, double fraisGestion) : this(identifiant, type, nombreTransactionMax)
+        {
+            FraisGestion = fraisGestion;
+        }
+
+        public Gestionnaire()
+        {
+
+        }
 
 
         // Méthodes
-        public double CalculFraisGestion(Transaction transaction)
+        public double CalculFraisGestion(string type)
         {
-            if (Type == Particulier)
+          
+            if (type == Particulier)
             {
-                return transaction.Montant * 1 / 100;
+                
+              
+                //return transaction.Montant * 1 / 100;
+                return 1 / 100;
             }
-            else if (Type == Entreprise)
+            else if (type == Entreprise)
             {
                 return 10;
             }

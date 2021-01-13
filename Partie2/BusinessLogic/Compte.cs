@@ -12,24 +12,25 @@ namespace Partie2.BusinessLogic
         // Propriétés
         public uint Identifiant { get; }
         public double Solde { get; set; }
-        public const double RetraitAutorise = 1000;
+        public const double RetraitAutorise = 2000;
+
         public List<Transaction> Historique { get; set; }
         public DateTime DateCreation { get; set; }
         public DateTime DateResiliation { get; set; }
 
+        public DateTime DateTransfert { get; set; }
 
 
         // Constructeur
-
-        public Compte(uint identifiant, double solde)
+        public Compte(uint identifiant, double solde, DateTime dateCreation, DateTime dateResiliation, DateTime dateTransfert )
         {
             Identifiant = identifiant;
             Solde = solde;
-            Historique = new List<Transaction>();
-
-
+            DateCreation = dateCreation;
+            DateResiliation = dateResiliation;
+            DateTransfert = dateTransfert;
         }
-        // Méthodes
+
 
         internal bool Depot(double montant)
         {
@@ -47,31 +48,30 @@ namespace Partie2.BusinessLogic
         {
             if (montant < Solde)
             {
-                //if (Historique is null)
-                //{
-                //    Solde -= montant;
-                //    return true;
-                //}
-                //else
-                //{
-                double total = Historique.Count > 0 ? Historique.GetRange(0, Historique.Count >= 9 ? 9 : Historique.Count).Sum(x => x.Montant) : 0;
-                //int NbTxn = Historique.Count();
-                //if (NbTxn >= 9)
-                //{
-                //    NbTxn = 9;
 
-                //}
-                //double MontantTotal = Historique.GetRange(0, NbTxn).Sum(x => x.Montant);
-                if (total + montant <= RetraitAutorise)
+                //double total = Historique.Count > 0 ? Historique.GetRange(Historique.Count >= 9 ? Historique.Count - 9 : 0, Historique.Count >= 9 ? 9 : Historique.Count).Sum(x => x.Montant) : 0;
+                double total;
+                List<Transaction> ts = new List<Transaction>();
+                int count = Historique.Count;
+                if (count > 9)
+                {
+                    total = Historique.GetRange(Historique.Count - 9, 9).Sum(x => x.Montant);
+                }
+                else
+                {
+                    total = Historique.Sum(x => x.Montant);
+                }
+
+
+                if (total + montant < RetraitAutorise)
                 {
                     Solde -= montant;
                     return true;
                 }
-                //    }
+
             }
             return false;
         }
-
         internal bool Prelevement(double montant, Gestionnaire gestionnaire, Transaction transaction)
         {
            
