@@ -120,6 +120,7 @@ namespace Partie2.BusinessLogic
                 else
                 {
                     Compte emetteur = gestionnaire.Comptes.Single(x => x.Identifiant == transaction.Emetteur);
+                    gestionnaire.CalculFraisGestion(gestionnaire.Type);
                     if (emetteur.Retrait(transaction.Montant))
                     {
                         emetteur.Historique.Add(transaction);
@@ -161,7 +162,7 @@ namespace Partie2.BusinessLogic
 
                 if (gestionnaire.Comptes.Contains(emetteur) && gestionnaire.Comptes.Contains(destinataire))
                 {
-                    if (emetteur.Prelevement(transaction.Montant, gestionnaire, transaction) && destinataire.Virement(transaction.Montant))
+                    if (emetteur.Prelevement(transaction.Montant, gestionnaire.CalculFraisGestion(gestionnaire.Type)) && destinataire.Virement(transaction.Montant))
                     {
                         if (emetteur.Historique is null)
                         {
@@ -178,8 +179,7 @@ namespace Partie2.BusinessLogic
                 }
                 else
                 {
-                    double MontantReel = transaction.Montant - gestionnaire.CalculFraisGestion(gestionnaire.Type);
-                    if (emetteur.Prelevement(MontantReel, gestionnaire, transaction) && destinataire.Virement(MontantReel))
+                    if (emetteur.Prelevement(transaction.Montant, gestionnaire.CalculFraisGestion(gestionnaire.Type)) && destinataire.Virement(transaction.Montant))
                     {
                         if (emetteur.Historique is null)
                         {

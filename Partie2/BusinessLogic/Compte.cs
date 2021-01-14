@@ -67,8 +67,6 @@ namespace Partie2.BusinessLogic
                 {
                     total = Historique.Sum(x => x.Montant);
                 }
-
-
                 if (total + montant < RetraitAutorise)
                 {
                     Solde -= montant;
@@ -78,10 +76,10 @@ namespace Partie2.BusinessLogic
             }
             return false;
         }
-        internal bool Prelevement(double montant, Gestionnaire gestionnaire, Transaction transaction)
+        internal bool Prelevement(double montant, double fraisDeGestion)
         {
            
-            return Retrait(montant);
+            return Retrait(montant + fraisDeGestion);
         }
 
         internal bool Virement(double montant)
