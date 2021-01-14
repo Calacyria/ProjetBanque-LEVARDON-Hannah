@@ -64,7 +64,9 @@ namespace Partie2.BusinessLogic
                     {
                         // Ajout de la datte de résiliation au compte et implémentation du dictionnaire
                         compteAResilier.DateResiliation = operation.Date;
+                        Comptes.Remove(compteAResilier.Identifiant);
                         Comptes.Add(compteAResilier.Identifiant, compteAResilier);
+
 
                         // Résiliation via gestionnaire pour le supprimer de sa liste de comptes
                         return gestionnaireResiliation.ResiliationCompte(compteAResilier) == true ? true : false;
@@ -103,23 +105,23 @@ namespace Partie2.BusinessLogic
 
             return false;
         }
-     
+
         //méthodes
         internal bool LectureTransaction(Transaction transaction, Gestionnaire gestionnaire)
         {
 
             if (transaction.Emetteur > 0 && transaction.Destinataire == 0)
             {
-                if (!Comptes.ContainsKey(transaction.Emetteur))
+                //if (!Comptes.ContainsKey(transaction.Emetteur))
+                if (gestionnaire == null)
                 {
                     return false;
                 }
                 else
                 {
-                    Compte emetteur = Comptes[transaction.Emetteur];
+                    Compte emetteur = gestionnaire.Comptes.Single(x => x.Identifiant == transaction.Emetteur);
                     if (emetteur.Retrait(transaction.Montant))
                     {
-                        emetteur.Historique = new List<Transaction>();
                         emetteur.Historique.Add(transaction);
                         return true;
                     }
@@ -144,9 +146,18 @@ namespace Partie2.BusinessLogic
             }
             else if (transaction.Emetteur > 0 && transaction.Destinataire > 0)
             {
+                Compte emetteur = Comptes.ContainsKey(transaction.Emetteur) ? Comptes[transaction.Emetteur] : null;
+                Compte destinataire = Comptes.ContainsKey(transaction.Destinataire) ? Comptes[transaction.Destinataire] : null;
 
-                Compte destinataire = Comptes[transaction.Destinataire];
-                Compte emetteur = Comptes[transaction.Emetteur];
+                if (emetteur == null)
+                {
+                    return false;
+                }
+
+                if (destinataire == null)
+                {
+                    return false;
+                }
 
                 if (gestionnaire.Comptes.Contains(emetteur) && gestionnaire.Comptes.Contains(destinataire))
                 {

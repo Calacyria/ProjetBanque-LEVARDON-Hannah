@@ -23,13 +23,13 @@ namespace Partie2
             //List<string> StatutsOperation = new List<string>();
 
             LectureTransaction(path, transactions);
-            foreach (var txn in transactions)
-            {
-                Console.WriteLine($"Identifiant de transaction : {txn.Identifiant}");
-                Console.WriteLine($"Date de transaction : {txn.DateEffet}");
-                Console.WriteLine($"Montant de transaction : {txn.Montant}");
-                Console.WriteLine($"Comptes emmeteur et destinataire de transaction : {txn.Emetteur} et {txn.Destinataire}");
-            }
+            //foreach (var txn in transactions)
+            //{
+            //    Console.WriteLine($"Identifiant de transaction : {txn.Identifiant}");
+            //    Console.WriteLine($"Date de transaction : {txn.DateEffet}");
+            //    Console.WriteLine($"Montant de transaction : {txn.Montant}");
+            //    Console.WriteLine($"Comptes emmeteur et destinataire de transaction : {txn.Emetteur} et {txn.Destinataire}");
+            //}
 
             LectureGestionnaire(path, gestionnaires);
             //foreach (var gest in gestionnaires)
@@ -47,10 +47,7 @@ namespace Partie2
             //    Console.WriteLine($"Date Resiliation compte : {cpt.DateResiliation}");
             //    Console.WriteLine($"Date Transfert compte : {cpt.DateTransfert}");
             //}
-            LectureOperation(path, lignesCompte, gestionnaires, banque, comptes, transactions);
-            //Sorties = banque.MiseAjourCompte(transactions, comptes);
-            //EcrireSorties(path, Sorties);
-
+            LectureOperationTransaction(path, lignesCompte, gestionnaires, banque, comptes, transactions);
             Console.ReadLine();
         }
 
@@ -117,42 +114,57 @@ namespace Partie2
             }
         }
 
-        private  static void LectureOperation(string path, List<LigneCompte> LignesComptes, List<Gestionnaire> gestionnaires, Banque banque, Dictionary<uint, Compte> comptes, List<Transaction> transactions)
+        private static void LectureOperationTransaction(string path, List<LigneCompte> LignesComptes, List<Gestionnaire> gestionnaires, Banque banque, Dictionary<uint, Compte> comptes, List<Transaction> transactions)
         {
             List<string> StatutsOperation = new List<string>();
-            foreach (var ligne in LignesComptes)
+            List<string> StatusTransactions = new List<string>();
+            int indice = 0;
+            foreach (var operation in LignesComptes)
             {
-                //bool VerifOperation = banque.LectureOperation(ligne, gestionnaires, comptes);
-                //if (VerifOperation == true)
-                //{
-                //    StatutsOperation.Add($"{ligne.Identifiant};OK");
-                //}
-                //else
-                //{
-                //    StatutsOperation.Add($"{ligne.Identifiant};KO");
-                //}
-                string statut = banque.LectureOperation(ligne, gestionnaires, comptes) ? "OK" : "KO";
-                StatutsOperation.Add($"{ligne.Identifiant};{statut}");
+                //List<Transaction> txnDate = transactions.FindAll(x => x.DateEffet > ligne.Date);
 
-                
-                List<Transaction> txnDate = transactions.FindAll(x => x.DateEffet < ligne.Date);
-                int index = txnDate.Count();
-
-                while ( index != 0 )
+                while (indice < transactions.Count() && transactions[indice].DateEffet < operation.Date)
                 {
-                    //.....BLA BLA BLA
+                    Gestionnaire gestionnaireATrouver = gestionnaires.Find(x => x.Comptes.Any(y => y.Identifiant == transactions[indice].Emetteur));
+                    string statutTransaction = banque.LectureTransaction(transactions[indice], gestionnaireATrouver) ? "OK" : "KO";
 
+                    if (StatusTransactions.Contains($"{transactions[indice].Identifiant};{statutTransaction}") == false)
+                    {
+                        StatusTransactions.Add($"{transactions[indice].Identifiant};{statutTransaction}");
+                    }
+                    indice++;
                 }
-               
+
+                string statutOperation = banque.LectureOperation(operation, gestionnaires, comptes) ? "OK" : "KO";
+                StatutsOperation.Add($"{operation.Identifiant};{statutOperation}");
+            }
+            for (int indice2 = indice; indice2 < transactions.Count; indice2++)
+            {
+                if (transactions[indice2].DateEffet >= LignesComptes[(LignesComptes.Count) - 1].Date)
+                {
+                    string statutTransaction = $"{transactions[indice2].Identifiant};KO";
+                    StatusTransactions.Add($"{statutTransaction}");
+                }
 
             }
+
+
+            EcrireSorties(path, StatutsOperation, StatusTransactions);
         }
-        private static void EcrireSorties(string path, List<string> Sorties)
+        private static void EcrireSorties(string path, List<string> statutsOPeration, List<string> statutTransactions)
         {
 
-            using (StreamWriter file = new StreamWriter(path + @"\Sorties.csv", true))
+            using (StreamWriter file = new StreamWriter(path + @"\Statuts_Operations_1.csv", true))
             {
-                foreach (var item in Sorties)
+                foreach (var item in statutsOPeration)
+                {
+                    file.WriteLine($"{item}");
+                }
+            }//end using
+
+            using (StreamWriter file = new StreamWriter(path + @"\Statuts_Transactions_1.csv", true))
+            {
+                foreach (var item in statutTransactions)
                 {
                     file.WriteLine($"{item}");
                 }

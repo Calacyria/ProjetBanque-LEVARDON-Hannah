@@ -32,12 +32,14 @@ namespace Partie2.BusinessLogic
             FraisGestion = fraisGestion;
             Comptes = new List<Compte>();
         }
+       
         public Gestionnaire(uint identifiant, string type, uint nombreTransactionMax )
         {
             Identifiant = identifiant;
             Type = type;
             this.nombreTransactionMax = nombreTransactionMax;
-           
+            Comptes = new List<Compte>();
+
         }
 
         public Gestionnaire(uint identifiant, string type, uint nombreTransactionMax, double fraisGestion) : this(identifiant, type, nombreTransactionMax)

@@ -29,6 +29,12 @@ namespace Partie2.BusinessLogic
             DateCreation = dateCreation;
             DateResiliation = dateResiliation;
             DateTransfert = dateTransfert;
+            Historique = new List<Transaction>();
+        }
+
+        public Compte()
+        {
+
         }
 
 
