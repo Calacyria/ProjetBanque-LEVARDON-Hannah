@@ -84,8 +84,7 @@ namespace Partie2.BusinessLogic
 
         public bool ResiliationCompte(Compte compte)
         {
-            Comptes.Remove(compte);
-            return false;
+            return Comptes.Remove(compte) ? true : false;
         }
 
         public bool CessionCompte(Compte compte, Gestionnaire gestionnaireEmetteur, Gestionnaire gestionnaireDestinataire)
